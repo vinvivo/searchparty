@@ -2,9 +2,13 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Simple File Upload</title>
+    <title>{% block title %}{% endblock title %}</title>
+    <meta name='description' content="{% block meta-content %}{% endblock meta-content %}">
     {% load static %}
-    <link href="{% static '' %}">
+    <link href="{% static 'css/style.css' %}" rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Source+Sans+Pro:200,300,400,600,700,900' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
     {% block content %}
