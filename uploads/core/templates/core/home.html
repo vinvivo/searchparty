@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}Search Party: Home{% endblock title %}}
-
-{% block meta-content %}Search Party Home: Choose a file upload method{% endblock meta-content %}
-
 {% block content %}
-   <ul>
+  <ul>
     <li>
       <a href="{% url 'simple_upload' %}">Simple Upload</a>
     </li>
@@ -22,7 +18,7 @@
         <small>(Uploaded at: {{ obj.uploaded_at }})</small>
       </li>
     {% endfor %}
-  </ul> 
+  </ul>
 
 <h1 class="home">Search:</h1>
 <input type="text" class="searchbox home shadowbox" placeholder="Yo, this search is lit" autofocus/>

@@ -15,15 +15,23 @@ def search(request):
     return render(request, 'core/index.html')
 
 def simple_upload(request):
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        return render(request, 'core/simple_upload.html', {
-            'uploaded_file_url': uploaded_file_url
-        })
-    return render(request, 'core/simple_upload.html')
+    if request.method == 'POST':
+        # myfile = request.FILES['myfile']
+        # print myfile
+        # fs = FileSystemStorage()
+        # filename = fs.save(myfile.name, myfile)
+        # uploaded_file_url = fs.url(filename)
+        context = {
+            # 'uploaded_file_url': uploaded_file_url,
+            'img': request.POST['image'],
+            'submitted': 'true;'
+        }
+        return render(request, 'core/simple_upload.html', context)
+        # return render(request, 'core/simple_upload.html', {'uploaded_file_url': uploaded_file_url})
+    context = {
+        'submitted': 'false;',
+    }
+    return render(request, 'core/simple_upload.html', context)
 
 
 def model_form_upload(request):

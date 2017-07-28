@@ -1,31 +1,129 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <button type="submit">Upload</button>
-  </form>
+    <form id="pic_submit"method="post">
+        {% csrf_token %}
+        <input type="text" name="image">
+        <button type="submit">Upload</button>
+    </form>
 
-  {% if uploaded_file_url %}
+    {% if uploaded_file_url %}
     <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-    <img>
     <img src="{{uploaded_file_url}}" alt="uploaded image" />
-  {% endif %}
+    <script src="https://www.googleapis.com/customsearch/v1?key=AIzaSyCR5yfo3aW89v9dycG1oSG9x-PPNeAabF8&amp;cx=003460793061234582236:qepgsswu6xg&amp;q=BURGER%20KING&amp;callback=hndlr">
+    </script>
 
-  <script>
-      (function() {
-          var cx = '003460793061234582236:qepgsswu6xg';
-          var gcse = document.createElement('script');
-          gcse.type = 'text/javascript';
-          gcse.async = true;
-          gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-          var s = document.getElementsByTagName('script')[0];
-          s.parentNode.insertBefore(gcse, s);
-      })();
-  </script>
-  <gcse:search></gcse:search>
-  
+    {% endif %}
 
-  <p><a href="{% url 'home' %}">Return to home</a></p>
+    <script>
+        function hndlr(response) {
+        for (var i = 0; i < response.items.length; i++) {
+            var item = response.items[i];
+            // var image = item.pagemap['cse_thumbnail'][0]['src'];
+            // in production code, item.htmlTitle should have the HTML entities escaped.
+            let container = $(document.createElement('p'))
+            container.append($(document.createElement('h3')).text(item.title));
+            container.append($(document.createElement('p')).text(item.snippet));
+            container.append($(document.createElement('a')).attr('href', item.link).text(item.link));
+            $(document.getElementById("content")).append(container);
+        }
+    }
+    </script>
+  <script type="text/javascript">
+    let submitted = {{submitted}}
+    var formData = {
+        "requests": [
+            {
+                "image": {
+                "source": {
+                    "imageUri": "{{img}}"
+                }
+            },
+              "features": [
+                {
+                "type": "LABEL_DETECTION",
+                "maxResults": 2
+            },
+                {
+                "type": "TEXT_DETECTION",
+                "maxResults": 2
+                }
+            ],
+                "imageContext": {
+                "languageHints": [
+                "en"
+                ]
+                }
+            }
+        ]
+    };
+    // alert(formData.requests[0].image.source.imageUri.match(/[^/]+$/g));
+    //alert(formData.requests[0].source);
+    var json = JSON.stringify(formData)
+
+    if (submitted){
+        function getFileData(myFile){
+            var file = myFile.files[0];
+            var filename = file.name;
+        }
+    $.ajax({
+            url:'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCR5yfo3aW89v9dycG1oSG9x-PPNeAabF8',
+            method:'post',
+            dataType: 'json',
+            data: json,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            success: function(data, textStatus, jqXHR) {
+                // console.log(data.responses[0]['logoAnnotations'][0].description, textStatus);
+                // console.log(data.responses[0]['labelAnnotations'])
+                // console.log(data.responses[0]['textAnnotations'])
+                var ann = data.responses[0]['labelAnnotations']
+                if (data.responses[0]['textAnnotations'] && (data.responses[0]['textAnnotations']).length > 0){
+                    for(var i = 0; i < ann.length; i++){
+                        let container = $('#pic_info');
+                        let content_container = $(document.createElement('p'))
+                        container.append(content_container)
+                        let a = $(document.createElement('a')).attr('href',
+                            'http://www.google.com/search?q=' +
+                            ann[i].description
+                        );
+                        content_container.append(a);
+
+                        let script = $(document.createElement('script')).attr('src', 'https://www.googleapis.com/customsearch/v1?key=AIzaSyCR5yfo3aW89v9dycG1oSG9x-PPNeAabF8&cx=003460793061234582236:tdd9urkowfi&q=' + data.responses[0]['textAnnotations'][i].description+'&callback=hndlr');
+                        a.append(script)
+                    }
+                }
+                else if ( ann && (data.responses[0]['labelAnnotations']).length > 0){
+                    for(var i = 0; i < ann.length; i++){
+                        let container = $('#pic_info');
+                        let content_container = $(document.createElement('p'))
+                        container.append(content_container)
+                        let a = $(document.createElement('a')).attr('href',
+                            'http://www.google.com/search?q=' +
+                            ann[i].description
+                        );
+                        content_container.append(a);
+
+                        let script = $(document.createElement('script')).attr('src', 'https://www.googleapis.com/customsearch/v1?key=AIzaSyCR5yfo3aW89v9dycG1oSG9x-PPNeAabF8&cx=003460793061234582236:tdd9urkowfi&q=' + ann[i].description+'&callback=hndlr');
+                        a.append(script)
+                    }
+                }
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('ERRORS: ' + textStatus + ' ' + errorThrown);
+            }
+        })
+    }
+    </script>
+
+    <div id="pic_info">
+
+    </div>
+    <p><a href="{% url 'home' %}">Return to home</a></p>
+
+    <div id="content"></div>
+
+
 {% endblock %}
