@@ -1,6 +1,9 @@
+{% extends 'base.html' %}
+
+{% block style %}
 * {
     font-size: 13px;
-    color: indianred;
+    color: black;
 }
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Source+Sans+Pro:200,300,400,600,700,900');
@@ -384,3 +387,5 @@ td{
 ::-webkit-scrollbar-thumb {
     -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.9); 
 }
+
+{% endblock style %}
