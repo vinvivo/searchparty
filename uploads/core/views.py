@@ -15,9 +15,6 @@ def search(request):
     return render(request, 'core/index.html')
 
 def simple_upload(request):
-    return render(request, 'core/simple_upload.html')
-
-def process(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
@@ -26,8 +23,7 @@ def process(request):
         return render(request, 'core/simple_upload.html', {
             'uploaded_file_url': uploaded_file_url
         })
-    else:
-        return redirect('/simple_upload.html')
+    return render(request, 'core/simple_upload.html')
 
 
 def model_form_upload(request):
